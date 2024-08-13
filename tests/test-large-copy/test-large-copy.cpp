@@ -61,14 +61,71 @@ void testLargeCopy(PimDeviceEnum deviceType)
   pimDeleteDevice();
 }
 
+void testLargeDeviceToDeviceCopy(PimDeviceEnum deviceType)
+{
+  // 8GB capacity
+  unsigned numRanks = 1;
+  unsigned numBankPerRank = 1; // 8 chips * 16 banks
+  unsigned numSubarrayPerBank = 32;
+  unsigned numRows = 2048;
+  unsigned numCols = 8192;
+
+  uint64_t numElements = 128; //  4LL * 1024 * 1024 + 2; // 4G + 2 elements
+  unsigned bitsPerElement = 8;
+  std::vector<char> src(numElements);
+  std::vector<char> dest(numElements);
+  for (uint64_t i = 0; i < numElements; ++i) {
+    src[i] = i % 256;
+  }
+
+  PimStatus status = pimCreateDevice(deviceType, numRanks, numBankPerRank, numSubarrayPerBank, numRows, numCols);
+  assert(status == PIM_OK);
+
+  PimObjId obj1 = pimAlloc(PIM_ALLOC_AUTO, numElements, bitsPerElement, PIM_INT8);
+  assert(obj1 != -1);
+
+  PimObjId obj2 = pimAllocAssociated(bitsPerElement, obj1, PIM_INT8);
+  assert(obj2 != -1);
+  status = pimCopyHostToDevice((void*)src.data(), obj1);
+  assert(status == PIM_OK);
+
+  status = pimCopyDeviceToDevice(obj1, obj2);
+  assert(status == PIM_OK);
+
+  status = pimCopyDeviceToHost(obj2, (void*)dest.data());
+  assert(status == PIM_OK);
+  
+  uint64_t numError = 0;
+  for (uint64_t i = 0; i < numElements; ++i) {
+    if (src[i] != dest[i]) {
+      numError++;
+      if (numError < 100) {
+        std::printf("ERROR: found mismatch at idx %lld: src 0x%x dest 0x%x\n", i, src[i], dest[i]);
+      }
+    }
+  }
+
+  pimFree(obj1);
+  pimFree(obj2);
+  std::printf("Total mismatch: %lld\n", numError);
+  
+  pimShowStats();
+  pimResetStats();
+  pimDeleteDevice();
+
+
+}
+
 int main()
 {
   std::cout << "PIM Regression Test: Large data copy" << std::endl;
 
-  testLargeCopy(PIM_DEVICE_BITSIMD_V);
+  // testLargeCopy(PIM_DEVICE_BITSIMD_V);
 
-  testLargeCopy(PIM_DEVICE_FULCRUM);
-
+  // testLargeCopy(PIM_DEVICE_FULCRUM);
+  testLargeDeviceToDeviceCopy(PIM_DEVICE_BITSIMD_V);
+  // testLargeDeviceToDeviceCopy(PIM_DEVICE_FULCRUM);
+  testLargeDeviceToDeviceCopy(PIM_DEVICE_BANK_LEVEL);
   return 0;
 }
 
