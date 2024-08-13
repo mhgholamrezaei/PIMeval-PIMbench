@@ -17,6 +17,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
   { PIM_DEVICE_BITSIMD_V, {
     { PIM_INT8, {
       { PimCmdEnum::ABS,          {    9,    8,   34 } },
+      { PimCmdEnum::COPY_D2D,     {    8,    8,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   16,    8,   25 } },
       { PimCmdEnum::SUB,          {   16,    8,   25 } },
@@ -48,6 +49,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT16, {
       { PimCmdEnum::ABS,          {   17,   16,   66 } },
+      { PimCmdEnum::COPY_D2D,     {   16,   16,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   32,   16,   49 } },
       { PimCmdEnum::SUB,          {   32,   16,   49 } },
@@ -79,6 +81,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT32, {
       { PimCmdEnum::ABS,          {   33,   32,  130 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32 ,   0  } },
       { PimCmdEnum::POPCOUNT,     {  114,  114,  218 } },
       { PimCmdEnum::ADD,          {   64,   32,   97 } },
       { PimCmdEnum::SUB,          {   64,   32,   97 } },
@@ -110,6 +113,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT64, {
       { PimCmdEnum::ABS,          {   65,   64,  258 } },
+      { PimCmdEnum::COPY_D2D,     {   64,   64,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {  128,   64,  193 } },
       { PimCmdEnum::SUB,          {  128,   64,  193 } },
@@ -141,6 +145,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT8, {
       { PimCmdEnum::ABS,          {    8,    8,    0 } },
+      { PimCmdEnum::COPY_D2D,     {    8,    8,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   16,    8,   25 } },
       { PimCmdEnum::SUB,          {   16,    8,   25 } },
@@ -172,6 +177,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT16, {
       { PimCmdEnum::ABS,          {   16,   16,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   16,   16,    0 } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   32,   16,   49 } },
       { PimCmdEnum::SUB,          {   32,   16,   49 } },
@@ -203,6 +209,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT32, {
       { PimCmdEnum::ABS,          {   32,   32,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32,   0  } },
       { PimCmdEnum::POPCOUNT,     {  114,  114,  218 } },
       { PimCmdEnum::ADD,          {   64,   32,   97 } },
       { PimCmdEnum::SUB,          {   64,   32,   97 } },
@@ -234,6 +241,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT64, {
       { PimCmdEnum::ABS,          {   64,   64,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   64,   64,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {  128,   64,  193 } },
       { PimCmdEnum::SUB,          {  128,   64,  193 } },
@@ -265,6 +273,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_FP32, {
       { PimCmdEnum::ADD,          { 1331,  685, 1687 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32,   0  } },
       { PimCmdEnum::SUB,          { 1331,  685, 1687 } },
       { PimCmdEnum::MUL,          { 1852, 1000, 3054 } },
       { PimCmdEnum::DIV,          { 2744, 1458, 4187 } },
@@ -273,6 +282,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
   { PIM_DEVICE_BITSIMD_V_AP, {
     { PIM_INT8, {
       { PimCmdEnum::ABS,          {    9,    8,   51 } },
+      { PimCmdEnum::COPY_D2D,     {    8,    8,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   16,    8,   25 } },
       { PimCmdEnum::SUB,          {   16,    8,   25 } },
@@ -304,6 +314,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT16, {
       { PimCmdEnum::ABS,          {   17,   16,   99 } },
+      { PimCmdEnum::COPY_D2D,     {   16,   16,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   32,   16,   49 } },
       { PimCmdEnum::SUB,          {   32,   16,   49 } },
@@ -335,6 +346,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT32, {
       { PimCmdEnum::ABS,          {   33,   32,  195 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32,   0  } },
       { PimCmdEnum::POPCOUNT,     {  114,  114,  317 } },
       { PimCmdEnum::ADD,          {   64,   32,   97 } },
       { PimCmdEnum::SUB,          {   64,   32,   97 } },
@@ -366,6 +378,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_INT64, {
       { PimCmdEnum::ABS,          {   65,   64,  387 } },
+      { PimCmdEnum::COPY_D2D,     {   64,   64,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {  128,   64,  193 } },
       { PimCmdEnum::SUB,          {  128,   64,  193 } },
@@ -397,6 +410,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT8, {
       { PimCmdEnum::ABS,          {    8,    8,    0 } },
+      { PimCmdEnum::COPY_D2D,     {    8,    8,   0  } },
       { PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   16,    8,   25 } },
       { PimCmdEnum::SUB,          {   16,    8,   25 } },
@@ -428,6 +442,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT16, {
       { PimCmdEnum::ABS,          {   16,   16,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   16,   16,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {   32,   16,   49 } },
       { PimCmdEnum::SUB,          {   32,   16,   49 } },
@@ -459,6 +474,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT32, {
       { PimCmdEnum::ABS,          {   32,   32,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32,   0  } },
       { PimCmdEnum::POPCOUNT,     {  114,  114,  317 } },
       { PimCmdEnum::ADD,          {   64,   32,   97 } },
       { PimCmdEnum::SUB,          {   64,   32,   97 } },
@@ -490,6 +506,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_UINT64, {
       { PimCmdEnum::ABS,          {   64,   64,    0 } },
+      { PimCmdEnum::COPY_D2D,     {   64,   64,   0  } },
       //{ PimCmdEnum::POPCOUNT,     {    0,    0,    0 } },
       { PimCmdEnum::ADD,          {  128,   64,  193 } },
       { PimCmdEnum::SUB,          {  128,   64,  193 } },
@@ -521,6 +538,7 @@ pimPerfEnergyTables::bitsimdPerfTable = {
     }},
     { PIM_FP32, {
       { PimCmdEnum::ADD,          { 1597,  822, 2024 } },
+      { PimCmdEnum::COPY_D2D,     {   32,   32,   0  } },
       { PimCmdEnum::SUB,          { 1597,  822, 2024 } },
       { PimCmdEnum::MUL,          { 2222, 1200, 3664 } },
       { PimCmdEnum::DIV,          { 3292, 1749, 5024 } },

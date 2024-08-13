@@ -431,8 +431,14 @@ pimCmdCopy::updateStats() const
       numElements = m_idxEnd - m_idxBegin;
     }
     unsigned bitsPerElement = objSrc.getBitsPerElement();
-    pimParamsPerf::perfEnergy mPerfEnergy = pimSim::get()->getParamsPerf()->getPerfEnergyForBytesTransfer(m_cmdType, numElements * bitsPerElement / 8);
-    pimSim::get()->getStatsMgr()->recordCopyDeviceToDevice(numElements * bitsPerElement, mPerfEnergy);
+//    pimParamsPerf::perfEnergy mPerfEnergy = pimSim::get()->getParamsPerf()->getPerfEnergyForBytesTransfer(m_cmdType, numElements * bitsPerElement / 8);
+//   pimSim::get()->getStatsMgr()->recordCopyDeviceToDevice(numElements * bitsPerElement, mPerfEnergy);
+    PimDataType dataType = objSrc.getDataType();
+    bool isVLayout = objSrc.isVLayout();
+
+
+    pimParamsPerf::perfEnergy mPerfEnergy = pimSim::get()->getParamsPerf()->getPerfEnergyForFunc1(m_cmdType, objSrc);
+    pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
 
     #if defined(DEBUG)
     std::printf("PIM-Info: Copied %llu elements of %u bits from PIM obj %d to PIM obj %d\n",

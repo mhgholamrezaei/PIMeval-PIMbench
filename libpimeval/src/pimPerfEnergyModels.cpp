@@ -184,6 +184,14 @@ pimParamsPerf::getPerfEnergyForFunc1(PimCmdEnum cmdType, const pimObjInfo& obj) 
       mjEnergy += m_pBChip * m_numChipsPerRank * numRanks * msRuntime;
       break;
     }
+    case PimCmdEnum::COPY_D2D:
+    {
+      msRuntime = m_tR + m_tW;
+      mjEnergy = numPass * numCores * ((m_eAP * 2) + ((maxElementsPerRegion - 1) * 2 *  m_fulcrumShiftEnergy));
+      mjEnergy += m_pBChip * m_numChipsPerRank * numRanks * msRuntime;
+      break;
+    }
+
     case PimCmdEnum::AND_SCALAR:
     case PimCmdEnum::OR_SCALAR:
     case PimCmdEnum::XOR_SCALAR:
@@ -229,6 +237,14 @@ pimParamsPerf::getPerfEnergyForFunc1(PimCmdEnum cmdType, const pimObjInfo& obj) 
       mjEnergy += m_pBChip * m_numChipsPerRank * numRanks * msRuntime;
       break;
     }
+    case PimCmdEnum::COPY_D2D:
+    {
+      msRuntime = m_tR + m_tW;
+      mjEnergy = numPass * numCores * ((m_eAP * 2) + ((maxElementsPerRegion - 1) * 2 *  m_fulcrumShiftEnergy));
+      mjEnergy += m_pBChip * m_numChipsPerRank * numRanks * msRuntime;
+      break;
+    }
+
     case PimCmdEnum::AND_SCALAR:
     case PimCmdEnum::OR_SCALAR:
     case PimCmdEnum::XOR_SCALAR:

@@ -22,7 +22,7 @@ config_files=(
 for config in "${config_files[@]}"
 do
   # Call the Slurm script for each config file, running each in the background
-  sbatch run_aes.sh $config &
+  bash run_aes.sh $config
 done
 
 # Wait for all background jobs to finish
