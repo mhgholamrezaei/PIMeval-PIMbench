@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=60
 #SBATCH --mem=128GB
 
-# input size = 16 GB
-input_size=$((2**7))
+# input size = 1 GB
+input_size=$((2**20))
 
 # Get the config file path from the first argument
 config_file=$1
