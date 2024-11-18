@@ -423,7 +423,7 @@ pimCmdFunc1::updateStats() const
 
   
   pimeval::perfEnergy mPerfEnergy = pimSim::get()->getPerfEnergyModel()->getPerfEnergyForFunc1(m_cmdType, objSrc);
-  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
+  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout, objSrc.getNumElements()), mPerfEnergy, objSrc.getNumElements());
   return true;
 }
 
@@ -534,7 +534,7 @@ pimCmdFunc2::updateStats() const
   bool isVLayout = objSrc1.isVLayout();
 
   pimeval::perfEnergy mPerfEnergy = pimSim::get()->getPerfEnergyModel()->getPerfEnergyForFunc2(m_cmdType, objSrc1);
-  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
+  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout, objSrc1.getNumElements()), mPerfEnergy, objSrc1.getNumElements());
   return true;
 }
 
@@ -645,7 +645,7 @@ pimCmdRedSum<T>::updateStats() const
   }
 
   pimeval::perfEnergy mPerfEnergy = pimSim::get()->getPerfEnergyModel()->getPerfEnergyForRedSum(m_cmdType, objSrc, numPass);
-  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
+  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout, objSrc.getNumElements()), mPerfEnergy, objSrc.getNumElements());
   return true;
 }
 
@@ -710,7 +710,7 @@ pimCmdBroadcast::updateStats() const
   bool isVLayout = objDest.isVLayout();
 
   pimeval::perfEnergy mPerfEnergy = pimSim::get()->getPerfEnergyModel()->getPerfEnergyForBroadcast(m_cmdType, objDest);
-  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
+  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout, objDest.getNumElements()), mPerfEnergy, objDest.getNumElements());
   return true;
 }
 
@@ -841,7 +841,7 @@ pimCmdRotate::updateStats() const
   bool isVLayout = objSrc.isVLayout();
 
   pimeval::perfEnergy mPerfEnergy = pimSim::get()->getPerfEnergyModel()->getPerfEnergyForRotate(m_cmdType, objSrc);
-  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout), mPerfEnergy);
+  pimSim::get()->getStatsMgr()->recordCmd(getName(dataType, isVLayout, objSrc.getNumElements()), mPerfEnergy, objSrc.getNumElements());
   return true;
 }
 

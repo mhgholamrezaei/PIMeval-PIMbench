@@ -43,6 +43,7 @@ public:
   unsigned getNumCols() const;
 
   void showStats() const;
+  void writeCmdStatsToJson(const std::string& jsonFileName) const;
   void resetStats() const;
   pimStatsMgr* getStatsMgr() { return m_statsMgr.get(); }
   const pimParamsDram& getParamsDram() const { assert(m_paramsDram); return *m_paramsDram; }

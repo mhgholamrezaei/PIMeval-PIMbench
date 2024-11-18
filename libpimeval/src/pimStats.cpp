@@ -12,7 +12,10 @@
 #include <cstdio>            // for printf
 #include <iostream>          // for cout
 #include <iomanip>           // for setw, fixed, setprecision
-
+#include <string>
+#include <tuple>
+#include <fstream>
+#include <sstream>
 
 //! @brief  Show PIM stats
 void
@@ -97,6 +100,54 @@ pimStatsMgr::showDeviceParams() const
   #endif
 }
 
+
+// Helper function to escape strings for JSON
+std::string escapeString(const std::string& str) {
+    std::ostringstream oss;
+    for (char c : str) {
+        switch (c) {
+            case '\"': oss << "\\\""; break;
+            case '\\': oss << "\\\\"; break;
+            case '\n': oss << "\\n"; break;
+            case '\t': oss << "\\t"; break;
+            default: oss << c; break;
+        }
+    }
+    return oss.str();
+}
+
+// Function to serialize the data to JSON
+std::string serializeToJson(const std::map<std::string, std::tuple<int, pimeval::perfEnergy, uint64_t>>& data) {
+    std::ostringstream oss;
+    oss << "{\n";
+    bool first = true;
+    for (const auto& [cmdName, tupleData] : data) {
+        if (!first) oss << ",\n";
+        first = false;
+
+        const auto& [count, perfEnergy, numElements] = tupleData;
+
+        oss << "  \"" << escapeString(cmdName) << "\": {\n"
+            << "    \"count\": " << count << ",\n"
+            << "    \"numElements\": " << numElements << "\n"
+            << "  }";
+    }
+    oss << "\n}";
+    return oss.str();
+}
+
+// Function to write JSON to file
+void 
+pimStatsMgr::writeCmdStatsToJson(const std::string& jsonFileName) {
+    std::string jsonString = serializeToJson(m_cmdPerf);
+    std::ofstream outFile(jsonFileName);
+    if (!outFile.is_open()) {
+        throw std::ios_base::failure("Failed to open file: " + jsonFileName);
+    }
+    outFile << jsonString;
+    outFile.close();
+}
+
 //! @brief  Show data copy stats
 void
 pimStatsMgr::showCopyStats() const
@@ -122,15 +173,15 @@ void
 pimStatsMgr::showCmdStats() const
 {
   std::printf("PIM Command Stats:\n");
-  std::printf(" %44s : %10s %14s %14s\n", "PIM-CMD", "CNT", "EstimatedRuntime(ms)", "EstimatedEnergyConsumption(mJ)");
+  std::printf(" %44s : %10s %14s %20s %14s\n", "PIM-CMD", "CNT", "#Elements", "EstimatedRuntime(ms)", "EstimatedEnergyConsumption(mJ)");
   int totalCmd = 0;
   double totalMsRuntime = 0.0;
   double totalMjEnergy = 0.0;
   for (const auto& it : m_cmdPerf) {
-    std::printf(" %44s : %10d %14f %14f\n", it.first.c_str(), it.second.first, it.second.second.m_msRuntime, it.second.second.m_mjEnergy);
-    totalCmd += it.second.first;
-    totalMsRuntime += it.second.second.m_msRuntime;
-    totalMjEnergy += it.second.second.m_mjEnergy;
+    std::printf(" %44s : %10d %9ld %14f %14f\n", it.first.c_str(), std::get<0>(it.second), std::get<2>(it.second), std::get<1>(it.second).m_msRuntime, std::get<1>(it.second).m_mjEnergy);
+    totalCmd += std::get<0>(it.second);
+    totalMsRuntime += std::get<1>(it.second).m_msRuntime;
+    totalMjEnergy += std::get<1>(it.second).m_mjEnergy;
   }
   std::printf(" %44s : %10d %14f %14f\n", "TOTAL ---------", totalCmd, totalMsRuntime, totalMjEnergy);
 
@@ -142,15 +193,15 @@ pimStatsMgr::showCmdStats() const
   int numPrecharge = 0;
   for (const auto& it : m_cmdPerf) {
     if (it.first == "row_r") {
-      numR += it.second.first;
-      numActivate += it.second.first;
-      numPrecharge += it.second.first;
+      numR += std::get<0>(it.second);
+      numActivate += std::get<0>(it.second);
+      numPrecharge += std::get<0>(it.second);
     } else if (it.first == "row_w") {
-      numW += it.second.first;
-      numActivate += it.second.first;
-      numPrecharge += it.second.first;
+      numW += std::get<0>(it.second);
+      numActivate += std::get<0>(it.second);
+      numPrecharge += std::get<0>(it.second);
     } else if (it.first.find("rreg.") == 0) {
-      numL += it.second.first;
+      numL += std::get<0>(it.second);
     }
   }
   if (numR > 0 || numW > 0 || numL > 0) {

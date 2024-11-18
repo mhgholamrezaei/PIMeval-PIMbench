@@ -103,9 +103,10 @@ public:
   std::string getName() const {
     return getName(m_cmdType, "");
   }
-  std::string getName(PimDataType dataType, bool isVLayout) const {
+  std::string getName(PimDataType dataType, bool isVLayout, uint64_t numElements = 0) const {
     std::string suffix = "." + pimUtils::pimDataTypeEnumToStr(dataType);
     suffix += isVLayout ? ".v" : ".h";
+    suffix += "." + std::to_string(numElements);
     return getName(m_cmdType, suffix);
   }
   static std::string getName(PimCmdEnum cmdType, const std::string& suffix);

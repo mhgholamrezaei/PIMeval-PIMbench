@@ -39,12 +39,14 @@ public:
 
   void showStats() const;
   void resetStats();
-  
-  void recordCmd(const std::string& cmdName, pimeval::perfEnergy mPerfEnergy) {
+  void writeCmdStatsToJson(const std::string& jsonFileName = "stats.json");
+
+  void recordCmd(const std::string& cmdName, pimeval::perfEnergy mPerfEnergy, const uint64_t numElements = 0) {
     auto& item = m_cmdPerf[cmdName];
-    item.first++;
-    item.second.m_msRuntime += mPerfEnergy.m_msRuntime;
-    item.second.m_mjEnergy += mPerfEnergy.m_mjEnergy;
+    std::get<0>(item)++;  
+    std::get<1>(item).m_msRuntime += mPerfEnergy.m_msRuntime;  
+    std::get<1>(item).m_mjEnergy += mPerfEnergy.m_mjEnergy;  
+    std::get<2>(item) += numElements; 
   }
 
   void recordMsElapsed(const std::string& tag, double elapsed) {
@@ -77,7 +79,7 @@ private:
   void showCopyStats() const;
   void showCmdStats() const;
 
-  std::map<std::string, std::pair<int, pimeval::perfEnergy>> m_cmdPerf;
+  std::map<std::string, std::tuple<int, pimeval::perfEnergy, uint64_t>> m_cmdPerf;
   std::map<std::string, std::pair<int, double>> m_msElapsed;
 
   uint64_t m_bitsCopiedMainToDevice = 0;

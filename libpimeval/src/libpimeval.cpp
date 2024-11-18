@@ -46,6 +46,14 @@ void
 pimShowStats()
 {
   pimSim::get()->showStats();
+  pimSim::get()->writeCmdStatsToJson("stats.json");
+}
+
+//! @brief  Write PIM command stats to a file 
+void 
+pimWriteCmdStatsToJson(const char* jsonFileName) 
+{
+  pimSim::get()->writeCmdStatsToJson(jsonFileName);
 }
 
 //! @brief  Reset PIM command stats

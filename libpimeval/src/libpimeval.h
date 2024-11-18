@@ -95,6 +95,7 @@ PimStatus pimCreateDeviceFromConfig(PimDeviceEnum deviceType, const char* config
 PimStatus pimGetDeviceProperties(PimDeviceProperties* deviceProperties);
 PimStatus pimDeleteDevice();
 void pimShowStats();
+void pimWriteCmdStatsToJson(const char* jsonFileName);
 void pimResetStats();
 
 // Resource allocation and deletion

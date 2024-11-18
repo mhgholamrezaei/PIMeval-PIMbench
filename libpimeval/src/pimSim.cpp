@@ -365,6 +365,14 @@ pimSim::showStats() const
   m_statsMgr->showStats();
 }
 
+//! @brief  Write PIM command stats to a file 
+void
+pimSim::writeCmdStatsToJson(const std::string& jsonFileName) const
+{
+  m_statsMgr->writeCmdStatsToJson(jsonFileName);
+}
+
+
 //! @brief  Reset PIM command stats
 void
 pimSim::resetStats() const
