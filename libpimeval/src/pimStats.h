@@ -46,7 +46,7 @@ public:
     std::get<0>(item)++;  
     std::get<1>(item).m_msRuntime += mPerfEnergy.m_msRuntime;  
     std::get<1>(item).m_mjEnergy += mPerfEnergy.m_mjEnergy;  
-    std::get<2>(item) += numElements; 
+    std::get<2>(item) = numElements; 
   }
 
   void recordMsElapsed(const std::string& tag, double elapsed) {

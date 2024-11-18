@@ -101,7 +101,7 @@ pimStatsMgr::showDeviceParams() const
 }
 
 
-// Helper function to escape strings for JSON
+//! @brief  Helper function to escape strings for JSON
 std::string escapeString(const std::string& str) {
     std::ostringstream oss;
     for (char c : str) {
@@ -116,10 +116,28 @@ std::string escapeString(const std::string& str) {
     return oss.str();
 }
 
-// Function to serialize the data to JSON
+//! @brief  Function to generate the JSON string for the data copy stats
+std::string generateCopyStatsJson(
+    uint64_t bitsCopiedMainToDevice,
+    uint64_t bitsCopiedDeviceToMain,
+    uint64_t bitsCopiedDeviceToDevice
+) {
+    std::ostringstream oss;
+    oss << "  \"copy.h2d\": {\n"
+        << "    \"bits\": " << bitsCopiedMainToDevice << "\n"
+        << "  },\n"
+        << "  \"copy.d2h\": {\n"
+        << "    \"bits\": " << bitsCopiedDeviceToMain << "\n"
+        << "  },\n"
+        << "  \"copy.d2d\": {\n"
+        << "    \"bits\": " << bitsCopiedDeviceToDevice << "\n"
+        << "  }\n";
+    return oss.str();
+}
+
+//! @brief  Function to serialize the data to JSON
 std::string serializeToJson(const std::map<std::string, std::tuple<int, pimeval::perfEnergy, uint64_t>>& data) {
     std::ostringstream oss;
-    oss << "{\n";
     bool first = true;
     for (const auto& [cmdName, tupleData] : data) {
         if (!first) oss << ",\n";
@@ -132,14 +150,17 @@ std::string serializeToJson(const std::map<std::string, std::tuple<int, pimeval:
             << "    \"numElements\": " << numElements << "\n"
             << "  }";
     }
-    oss << "\n}";
+    oss << ",\n";
     return oss.str();
 }
 
-// Function to write JSON to file
+//! @brief  Function to write JSON to file
 void 
 pimStatsMgr::writeCmdStatsToJson(const std::string& jsonFileName) {
-    std::string jsonString = serializeToJson(m_cmdPerf);
+    std::string jsonString = "{\n";
+    jsonString += serializeToJson(m_cmdPerf);
+    jsonString += generateCopyStatsJson(m_bitsCopiedMainToDevice, m_bitsCopiedDeviceToMain, m_bitsCopiedDeviceToDevice);
+    jsonString += "}\n";
     std::ofstream outFile(jsonFileName);
     if (!outFile.is_open()) {
         throw std::ios_base::failure("Failed to open file: " + jsonFileName);
