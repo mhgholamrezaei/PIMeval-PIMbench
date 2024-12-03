@@ -1652,7 +1652,8 @@ int testDemo(int argc, char **argv) {
     unsigned numPaddedBufBytes = numbytes;
     unsigned numElements = numPaddedBufBytes / AES_BLOCK_SIZE;
 
-    PimStatus status = pimCreateDevice(PIM_FUNCTIONAL, numRanks, numBankPerRank, numSubarrayPerBank, numRows, numCols);
+    //PimStatus status = pimCreateDevice(PIM_FUNCTIONAL, numRanks, numBankPerRank, numSubarrayPerBank, numRows, numCols);
+    PimStatus status = pimCreateDeviceFromConfig(PIM_FUNCTIONAL, nullptr);
     assert(status == PIM_OK);
 
     std::vector<PIMAuxilary*> *inputObjBuf = new std::vector<PIMAuxilary*>(AES_BLOCK_SIZE * numCalls);
