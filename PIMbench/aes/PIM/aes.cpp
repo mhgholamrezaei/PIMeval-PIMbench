@@ -5,6 +5,7 @@
 
 #include "libpimeval.h"
 #include "PIMAuxilary.h"
+#include "sbox.h"
 #include <iostream> 
 #include <vector>
 #include <cinttypes>
@@ -22,7 +23,7 @@
 
 #define AES_BLOCK_SIZE 16
 
-#define SUBBYTES_FUNCTIONAL
+//#define SUBBYTES_FUNCTIONAL
 #define RJXTIME_FUCNTIONAL
 
 // Function-like macros to avoid repetitive code.
@@ -142,7 +143,7 @@ void aes256DecryptEcb(uint8_t *buf, unsigned long offset);
 void encryptdemo(uint8_t key[32], uint8_t *buf, unsigned long numbytes);
 void decryptdemo(uint8_t key[32], uint8_t *buf, unsigned long numbytes);
 
-#define FUNCTION_UNDER_TEST testDemo  
+#define FUNCTION_UNDER_TEST testAesSubBytes  
 
 // Test functions 
 int testRjXtime(void);  
@@ -177,13 +178,13 @@ void encryptdemo(uint8_t key[32], std::vector<PIMAuxilary*>* inputObjBuf, unsign
 void decryptdemo(uint8_t key[32], std::vector<PIMAuxilary*>* inputObjBuf, unsigned long numCalls);
    
 int main(int argc, char **argv){
-    srand(time(NULL));
+    //srand(time(NULL));
     // int returnStatus = testEncryptdemo();
     // int returnStatus = testDecryptdemo();
-    // int returnStatus = FUNCTION_UNDER_TEST();
+     int returnStatus = FUNCTION_UNDER_TEST();
     // std::cout << "INFO: Host elapsed time : " << std::fixed << std::setprecision(6) << host_elapsedTime_global.count() << " ms." << std::endl;
    
-    int returnStatus = testDemo(argc, argv);
+    //int returnStatus = testDemo(argc, argv);
     /* TODO: uncomment it. used to avoid core dump in slurm task. */
     assert(returnStatus == 0);
     return 0;
@@ -521,13 +522,13 @@ int testAesSubBytes() {
     unsigned numCores = numRanks * numBanks * numSubarrayPerBank / 2;
     unsigned numRows = 65536;
 
-    unsigned numCols = 1024; 
+    unsigned numCols = 128; 
     unsigned totalCols = numCols * numCores;
     unsigned long numElements = totalCols;
     unsigned long numBytes = numElements * AES_BLOCK_SIZE;
    
     // Initialize PIM device
-    PimStatus status = pimCreateDevice(PIM_FUNCTIONAL, numRanks, numBanks, numSubarrayPerBank, numRows, numCols);
+    PimStatus status = pimCreateDevice(PIM_DEVICE_BITSIMD_V, numRanks, numBanks, numSubarrayPerBank, numRows, numCols);
 
     // Allocate memory for input buffers
     std::vector<PIMAuxilary*> *inputObjBuf = new std::vector<PIMAuxilary*>(AES_BLOCK_SIZE);
@@ -1640,10 +1641,10 @@ int testDemo(int argc, char **argv) {
     printf("INFO: Padding file with %d bytes for a new size of %lu\n", padding, numbytes);
 
     // Each rank has 8 chips; Total Bank = 16; Each Bank contains 32 subarrays;
-    unsigned numRanks = 2;
-    unsigned numBankPerRank = 128; // 8 chips * 16 banks
-    unsigned numSubarrayPerBank = 32;
-    unsigned numRows = 8192;
+    unsigned numRanks = 1;
+    unsigned numBankPerRank = 1; // 8 chips * 16 banks
+    unsigned numSubarrayPerBank = 2;
+    unsigned numRows = 32768;
     unsigned numCols = 8192;
     unsigned numCores = numRanks * numBankPerRank * numSubarrayPerBank / 2; 
     unsigned totalCols = numCores * numCols;
@@ -1652,7 +1653,7 @@ int testDemo(int argc, char **argv) {
     unsigned numPaddedBufBytes = numbytes;
     unsigned numElements = numPaddedBufBytes / AES_BLOCK_SIZE;
 
-    PimStatus status = pimCreateDevice(PIM_FUNCTIONAL, numRanks, numBankPerRank, numSubarrayPerBank, numRows, numCols);
+    PimStatus status = pimCreateDevice(PIM_DEVICE_BITSIMD_V, numRanks, numBankPerRank, numSubarrayPerBank, numRows, numCols);
     assert(status == PIM_OK);
 
     std::vector<PIMAuxilary*> *inputObjBuf = new std::vector<PIMAuxilary*>(AES_BLOCK_SIZE * numCalls);
@@ -1810,10 +1811,11 @@ void rjXtime(PIMAuxilary* xObj, PIMAuxilary* returnValueObj){
 }
 
 void aesSubBytes(std::vector<PIMAuxilary*>* inputObjBuf) {
-
-    /* TODO: Implementation based on bit-serial look-up table */
+    int status;
+    struct PimDeviceProperties pimDeviceProperties; 
+    status = pimGetDeviceProperties(&pimDeviceProperties);
+    assert(status == PIM_OK);
 #ifdef SUBBYTES_FUNCTIONAL
-     int status;
      // Copy input buffer back to the host 
      for (unsigned j = 0; j < AES_BLOCK_SIZE; ++j) {
          status = pimCopyDeviceToHost((*inputObjBuf)[j]->pimObjId, (void*)(*inputObjBuf)[j]->array.data());
@@ -1839,19 +1841,35 @@ void aesSubBytes(std::vector<PIMAuxilary*>* inputObjBuf) {
          assert(status == PIM_OK);
      }
 #else     
-    int totalAndOperations = 318 * AES_BLOCK_SIZE / 8; 
-    int orOperations = 415 * AES_BLOCK_SIZE / 8 ;
-    int NotOperations = 8 * AES_BLOCK_SIZE / 8; 
-
-    for (int i = 0; i < totalAndOperations; i++) {
-        pimAnd((*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId);
+    if (pimDeviceProperties.deviceType == PIM_DEVICE_BITSIMD_V) {
+      std::vector<PIMAuxilary*> *outputObjBuf = new std::vector<PIMAuxilary*>(AES_BLOCK_SIZE);
+      (*outputObjBuf)[0]= new PIMAuxilary((*inputObjBuf)[0]);
+      for (unsigned j = 1; j < AES_BLOCK_SIZE; ++j) {
+        (*outputObjBuf)[j]= new PIMAuxilary((*inputObjBuf)[0]);
+      }
+      for (unsigned j = 0; j < AES_BLOCK_SIZE; ++j) {
+        sbox_ap((*inputObjBuf)[j]->pimObjId, (*outputObjBuf)[j]->pimObjId);
+      } 
+      for (unsigned j = 0; j < AES_BLOCK_SIZE; ++j) {
+        pimFree((*inputObjBuf)[j]->pimObjId);
+      }
+      *inputObjBuf = *outputObjBuf; 
     }
+    else { // Bank-level and Fulcrum 
 
-    for (int i = 0; i < orOperations; i++) {
-        pimOr((*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId);
+      int totalAndOperations = 318 * AES_BLOCK_SIZE / 8; 
+      int orOperations = 415 * AES_BLOCK_SIZE / 8 ;
+      int NotOperations = 8 * AES_BLOCK_SIZE / 8; 
+
+      for (int i = 0; i < totalAndOperations; i++) {
+          pimAnd((*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId);
+      }
+
+      for (int i = 0; i < orOperations; i++) {
+          pimOr((*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId, (*inputObjBuf)[0]->pimObjId);
+      }
     }
 #endif    
-    /* END */
 
 }
 
@@ -2535,7 +2553,7 @@ void usage() {
 }
 
 struct Params getInputParams(int argc, char **argv) {
-    struct Params p = {65536, NULL, NULL, "./cipher.txt", "./output.txt", false};
+    struct Params p = {1024, NULL, NULL, "./cipher.txt", "./output.txt", false};
     int opt;
 
     while ((opt = getopt(argc, argv, "hl:k:i:c:o:v:")) >= 0) {
